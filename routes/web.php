@@ -21,6 +21,7 @@ Route::prefix('admin')->group(function (){
     Route::get('/kamar', [KamarController::class, 'index'])->name('kamar');
     Route::get('/kamar/getdatatables', [KamarController::class, 'datatable'])->name('datatable');
     Route::get('/kamar/edit/{id}', [KamarController::class, 'edit'])->name('edit-kamar');
+    Route::post('/deleteproduct', [KamarController::class, 'delete'])->name('delete-product');
 
     Route::post('/kamar', [KamarController::class, 'add'])->name('kamar_add');
 

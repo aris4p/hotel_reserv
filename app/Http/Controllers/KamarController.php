@@ -22,7 +22,7 @@ class KamarController extends Controller
         ->addIndexColumn()
          ->addColumn('action', function ($row) {
                 // kita tambahkan button edit dan hapus
-                $btn = '<a href="'.route('edit-kamar', $row->id).'"  class="edit btn btn-primary btn-sm editProduk"><i class="fa fa-edit"></i>Edit</a>';
+                $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '"  class="edit btn btn-primary btn-sm editKamar"><i class="fa fa-edit"></i>Edit</a>';
 
                 $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduk"><i class="fa fa-trash"></i>Delete</a>';
 
@@ -42,4 +42,21 @@ class KamarController extends Controller
         ]);
         return response()->json(['message' => "Success", 'data' => $kamar]);
     }
+
+    public function edit($id){
+        $kamar = Kamar::findOrFail($id);
+
+        return response()->json($kamar);
+    }
+
+    public function delete(Request $request)
+    {
+        $id = $request->post('id');
+
+        $empdata = Kamar::find($id);
+        $empdata->delete();
+
+        return response()->json(['message'=> "Success"]);
+    }
+
 }

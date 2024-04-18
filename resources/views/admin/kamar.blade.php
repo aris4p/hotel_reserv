@@ -27,39 +27,15 @@
         <thead>
             <tr>
                 <th scope="col">No</th>
-                <th scope="col">Gambar Produk</th>
+
                 <th scope="col">Nama Produk</th>
-                <th scope="col">Stok</th>
+                <th scope="col">Tipe</th>
                 <th scope="col">Harga</th>
+                <th scope="col">Gambar Produk</th>
                 <th scope="col">Aksi</th>
 
             </tr>
         </thead>
-        {{-- <tbody>
-            @foreach ($products as $product)
-
-            <tr>
-                <th scope="row">{{ $no++ }}</th>
-                <td>{{ $product->nama }}</td>
-                <td>{{ $product->tipe }}</td>
-                <td>Rp. {{ number_format($product->harga) }}</td>
-
-
-                <td >
-
-                    <a href="{{ route ('product-edit', ['id'=>$product->id]) }}" class="btn btn-sm btn-warning idProduct" id="idProduct" data-bs-toggle="modal" data-bs-target="#basicModal">Edit</a>
-                    <form action="{{ route('delete-product', $product->id)}}" method="post" class="d-inline">
-                        @method('DELETE')
-                        @csrf
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah yakin ingin menghapus?')" type="submit" value="Hapus" />Hapus</button>
-                    </form>
-                </td>
-
-            </tr>
-
-
-            @endforeach
-        </tbody> --}}
     </table>
 
     <!-- Modal Tambah data -->
@@ -116,22 +92,22 @@
     <!-- Edit Modal -->
     <form  action="javascript:void(0)" class="form-horizontal" onSubmit="return checkForm(this);">
         @csrf
-        <div class="modal fade" id="modal-form" tabindex="-1">
+        <div class="modal fade editKamar" id="edit-kamar" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Produk</h5>
+                        <h5 class="modal-title">Kamar</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body editKamar">
 
                         <div class="form-group">
                             <input type="hidden" name="id" id="id" class="form-control">
-                            <label class="col-lg control-label">Nama Produk</label>
+                            <label class="col-lg control-label">Nama Kamar</label>
                             <div class="col-lg-10">
                                 <input type="text" name="nama" id="nama" value="" class="form-control">
                             </div>
-                            <label class="col-lg control-label">Stok</label>
+                            <label class="col-lg control-label">Tipe</label>
                             <div class="col-lg-10">
                                 <input type="text" name="tipe" id="tipe" value="" class="form-control">
                             </div>
@@ -227,29 +203,37 @@ src="//cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.3/af-2.3.7/b-2.1.1/cr-1.5.5/dat
             simpan();
         });
     });
-
-
-    // //edit Produk
-    // $('body').on('click', '.editProduk', function(e){
-    //     var id = $(this).data('id');
-    //     $.ajax({
-    //         url: "product-control/"+ id + '/edit',
-    //         type: 'GET',
-    //         success:function(response){
-    //             $('#tambah-produk').modal('show');
-    //             $('#nama').val(response.result.nama);
-    //             $('#qty').val(response.result.qty);
-    //             $('#harga').val(response.result.harga);
-    //             $('#gambar').val(response.result.gambar);
-
-    //             console.log(response.result);
-    //             $('.tombol-simpan').click(function(){
-    //                 simpan(id);
-    //             });
-    //         }
-
+    // $('body').on('click', '.tombol-edit-kamar', function(e){
+    //     $('#edit-kamar').modal('show');
+    //     $('.tombol-simpan').click(function(){
+    //         simpan();
     //     });
     // });
+
+
+    //edit Produk
+    $('body').on('click', '.editKamar', function(e){
+        let id = $(this).data('id');
+        let var_url = "{{ route('edit-kamar', ':id') }}";
+        var_url = var_url.replace(':id', id);
+        $.ajax({
+            url: var_url,
+            type: 'GET',
+            success:function(response){
+                $('#edit-kamar').modal('show');
+                $('#nama').val(response.nama);
+                $('#tipe').val(response.tipe);
+                $('#harga').val(response.harga);
+
+
+                console.log(response);
+                $('.tombol-simpan').click(function(){
+                    simpan(id);
+                });
+            }
+
+        });
+    });
 
 
 
@@ -257,7 +241,7 @@ src="//cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.3/af-2.3.7/b-2.1.1/cr-1.5.5/dat
     $('.close').click(function(){
         $("#tambah-kamar").modal('hide');
     });
-    $('#tambah-produk').on('hidden.bs.modal', function(){
+    $('#tambah-kamar').on('hidden.bs.modal', function(){
         $('#nama').val('');
         $('#tipe').val('');
         $('#harga').val('');
@@ -271,11 +255,13 @@ src="//cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.3/af-2.3.7/b-2.1.1/cr-1.5.5/dat
 
     // function simpan dan update
     function simpan(id = '') {
+
         if (id == '') {
             var var_url = "{{ route('kamar_add') }}";
             var var_type = 'POST';
         } else {
-            var var_url = 'product-control/'+id;
+            var var_url = "{{ route('edit-kamar', ':id') }}";
+            var_url = var_url.replace(':id', id);
             var var_type = 'PUT';
         }
         $.ajax({
@@ -309,28 +295,28 @@ src="//cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.3/af-2.3.7/b-2.1.1/cr-1.5.5/dat
 
     //     //delete produk
 
-        // $('body').on('click','.deleteProduk',function(){
-        //     var id = $(this).data('id');
-        //     console.log(id);
-        //     var deleteConfirm = confirm("Menghapus produk akan menghapus seluruh transaksi yang berelasi, apakah kamu yakin?");
-        //     if (deleteConfirm == true) {
-        //         // AJAX request
-        //         $.ajax({
-        //             url: "#",
-        //             type: 'post',
-        //             data: {_token: CSRF_TOKEN,id: id},
-        //             success: function(response){
-        //                 if(response.success == 1){
-        //                     // Reload DataTable
-        //                     table.ajax.reload();
-        //                 }else{
-        //                     alert("Invalid ID.");
-        //                 }
-        //             }
-        //         });
-        //     }
+        $('body').on('click','.deleteProduk',function(){
+            var id = $(this).data('id');
+            console.log(id);
+            var deleteConfirm = confirm("Menghapus produk akan menghapus seluruh transaksi yang berelasi, apakah kamu yakin?");
+            if (deleteConfirm == true) {
+                // AJAX request
+                $.ajax({
+                    url: "{{ route('delete-product') }}",
+                    type: 'post',
+                    data: {_token: CSRF_TOKEN,id: id},
+                    success: function(response){
+                        if(response.message == "Success"){
+                            // Reload DataTable
+                            table.ajax.reload();
+                        }else{
+                            alert("Invalid ID.");
+                        }
+                    }
+                });
+            }
 
-        // });
+        });
 
     //     let formSubmitted = false;
     //     function checkForm(form)
